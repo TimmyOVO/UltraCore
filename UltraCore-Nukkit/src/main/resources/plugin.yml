@@ -1,0 +1,5 @@
+name: UltraCore
+version: ${project.version}
+main: com.github.skystardust.ultracore.nukkit.UltraCore
+authors: [SkyStardust]
+api: ["1.0.0"]
