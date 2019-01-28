@@ -125,25 +125,22 @@ public class DatabaseManager {
         } catch (Exception e) {
             throw new DatabaseInitException(e.getMessage(), e.getCause());
         }
-        for (Class<?> aClass : modelClass) {
+        try {
+            ebeanServer.find(modelClass.get(0)).setMaxRows(1).findCount();
+        } catch (Exception exx) {
+            SpiServer pluginApi = ebeanServer.getPluginApi();
             try {
-                ebeanServer.find(aClass).setMaxRows(1).findCount();
-            } catch (Exception exx) {
-                SpiServer pluginApi = ebeanServer.getPluginApi();
-                try {
-                    Field ddlGenerator = pluginApi.getClass().getDeclaredField("ddlGenerator");
-                    ddlGenerator.setAccessible(true);
-                    DdlGenerator ddlGenerator1 = (DdlGenerator) ddlGenerator.get(pluginApi);
-                    Method createAllDdl = ddlGenerator1.getClass().getDeclaredMethod("generateCreateAllDdl");
-                    createAllDdl.setAccessible(true);
-                    String invoke = (String) createAllDdl.invoke(ddlGenerator1);
-                    ddlGenerator1.runScript(false, invoke, "init_script");
-                } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
-                    ex.printStackTrace();
-                }
+                Field ddlGenerator = pluginApi.getClass().getDeclaredField("ddlGenerator");
+                ddlGenerator.setAccessible(true);
+                DdlGenerator ddlGenerator1 = (DdlGenerator) ddlGenerator.get(pluginApi);
+                Method createAllDdl = ddlGenerator1.getClass().getDeclaredMethod("generateCreateAllDdl");
+                createAllDdl.setAccessible(true);
+                String invoke = (String) createAllDdl.invoke(ddlGenerator1);
+                ddlGenerator1.runScript(false, invoke, "init_script");
+            } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
+                ex.printStackTrace();
             }
         }
-
         getOwnerPlugin().getPluginLogger().info("初始化 " + name + " 的数据库成功!");
         return this;
     }

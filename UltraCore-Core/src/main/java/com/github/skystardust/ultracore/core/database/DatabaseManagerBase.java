@@ -111,15 +111,12 @@ public class DatabaseManagerBase {
         } catch (Exception e) {
             throw new DatabaseInitException(e.getMessage(), e.getCause());
         }
-        for (Class<?> aClass : modelClass) {
-            try {
-                ebeanServer.find(aClass).setMaxRows(1).findUnique();
-            } catch (Exception e) {
-                DdlGenerator gen = SpiEbeanServer.class.cast(ebeanServer).getDdlGenerator();
-                gen.runScript(false, gen.generateCreateDdl());
-            }
+        try {
+            ebeanServer.find(modelClass.get(0)).setMaxRows(1).findUnique();
+        } catch (Exception e) {
+            DdlGenerator gen = SpiEbeanServer.class.cast(ebeanServer).getDdlGenerator();
+            gen.runScript(false, gen.generateCreateDdl());
         }
-
         getOwnerPlugin().getPluginLogger().info("初始化数据库 " + name + " 已成功!");
         return this;
     }
