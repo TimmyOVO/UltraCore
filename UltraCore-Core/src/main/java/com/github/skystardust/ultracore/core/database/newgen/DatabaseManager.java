@@ -126,7 +126,9 @@ public class DatabaseManager {
             throw new DatabaseInitException(e.getMessage(), e.getCause());
         }
         try {
-            ebeanServer.find(modelClass.get(0)).setMaxRows(1).findCount();
+            for (Class<?> aClass : modelClass) {
+                ebeanServer.find(aClass).setMaxRows(1).findCount();
+            }
         } catch (Exception exx) {
             SpiServer pluginApi = ebeanServer.getPluginApi();
             try {

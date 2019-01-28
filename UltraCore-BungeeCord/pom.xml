@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.github.skystardust</groupId>
             <artifactId>UltraCore-Core</artifactId>
-            <version>3.3-SNAPSHOT</version>
+            <version>3.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
