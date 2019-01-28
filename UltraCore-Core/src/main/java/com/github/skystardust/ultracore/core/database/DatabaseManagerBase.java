@@ -112,7 +112,9 @@ public class DatabaseManagerBase {
             throw new DatabaseInitException(e.getMessage(), e.getCause());
         }
         try {
-            ebeanServer.find(modelClass.get(0)).setMaxRows(1).findUnique();
+            for (Class<?> aClass : modelClass) {
+                ebeanServer.find(aClass).setMaxRows(1).findUnique();
+            }
         } catch (Exception e) {
             DdlGenerator gen = SpiEbeanServer.class.cast(ebeanServer).getDdlGenerator();
             gen.runScript(false, gen.generateCreateDdl());
