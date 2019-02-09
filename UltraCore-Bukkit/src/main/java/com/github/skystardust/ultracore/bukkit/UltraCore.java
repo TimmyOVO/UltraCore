@@ -8,10 +8,12 @@ import com.github.skystardust.ultracore.core.database.DatabaseListenerRegistry;
 import com.github.skystardust.ultracore.core.database.DatabaseRegistry;
 import com.github.skystardust.ultracore.core.exceptions.ConfigurationException;
 import com.github.skystardust.ultracore.core.exceptions.DatabaseInitException;
+import com.github.skystardust.ultracore.core.modules.JarModuleManager;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -153,13 +155,78 @@ public final class UltraCore extends JavaPlugin implements PluginInstance {
                             return true;
                         })
                         .build())
+                .childCommandSpec(SubCommandSpec.newBuilder()
+                        .addAlias("mod")
+                        .addAlias("module")
+                        .childCommandSpec(SubCommandSpec.newBuilder()
+                                .addAlias("l")
+                                .addAlias("list")
+                                .withCommandSpecExecutor((commandSender, args) -> {
+                                    JarModuleManager.getModulesMap()
+                                            .forEach((name, instance) -> {
+                                                sendMessage(commandSender, "--------" + name + "--------");
+                                            });
+                                    return true;
+                                })
+                                .build())
+                        .childCommandSpec(SubCommandSpec.newBuilder()
+                                .addAlias("r")
+                                .addAlias("reload")
+                                .withCommandSpecExecutor((commandSender, args) -> {
+                                    if (args.length < 1) {
+                                        return true;
+                                    }
+                                    commandSender.sendMessage("重载Module: " + JarModuleManager.reloadModule(args[0]));
+                                    return true;
+                                })
+                                .build())
+                        .childCommandSpec(SubCommandSpec.newBuilder()
+                                .addAlias("l")
+                                .addAlias("load")
+                                .withCommandSpecExecutor((commandSender, args) -> {
+                                    if (args.length < 1) {
+                                        return true;
+                                    }
+                                    if (JarModuleManager.loadModule(new File("./uc-modules",args[0]+".jar"))) {
+                                        commandSender.sendMessage("加载 "+args[0]+" 已经成功!");
+                                        return true;
+                                    }
+                                    commandSender.sendMessage("无法加载 "+args[0]);
+                                    return true;
+                                })
+                                .build())
+                        .childCommandSpec(SubCommandSpec.newBuilder()
+                                .addAlias("ul")
+                                .addAlias("unload")
+                                .withCommandSpecExecutor((commandSender, args) -> {
+                                    if (args.length < 1) {
+                                        return true;
+                                    }
+                                    if (JarModuleManager.unloadModule(args[0])!=null) {
+                                        commandSender.sendMessage("卸载 "+args[0]+" 已经成功!");
+                                        return true;
+                                    }
+                                    commandSender.sendMessage("无法卸载 "+args[0]);
+                                    return true;
+                                })
+                                .build())
+                        .withCommandSpecExecutor((commandSender, args) -> {
+                            sendMessage(commandSender, "/uc mod reload [名称] - 重载Module");
+                            sendMessage(commandSender,"/uc mod load [文件名] - 加载文件");
+                            sendMessage(commandSender,"/uc mod unload [名称] - 卸载Module");
+                            sendMessage(commandSender, "/uc mod list - 列出所有已经加载的Module");
+                            return true;
+                        })
+                        .build())
                 .withCommandSpecExecutor((commandSender, args) -> {
                     commandSender.sendMessage("/uc database - 数据库相关");
                     commandSender.sendMessage("/uc config - 配置文件相关");
+                    commandSender.sendMessage("/uc mod - Module相关");
                     return true;
                 })
                 .build()
                 .register();
+        JarModuleManager.loadModules();
     }
 
     @Override
