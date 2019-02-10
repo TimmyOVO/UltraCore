@@ -57,6 +57,20 @@ public class ModuleClassLoader extends URLClassLoader {
     }
 
     @Override
+    public void close() throws IOException {
+        try {
+            Method onDisable = instance.getClass().getMethod("onDisable");
+            onDisable.invoke(instance);
+        } catch (NoSuchMethodException ignored) {
+
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            System.out.println(file.getName() + " onDisable调用失败...!");
+            System.out.println(e.getLocalizedMessage());
+        }
+        super.close();
+    }
+
+    @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         System.out.println(">>>>>>>>>>>> Loading class : " + name);
         return super.findClass(name);

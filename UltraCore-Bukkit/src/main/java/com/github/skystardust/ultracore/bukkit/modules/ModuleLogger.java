@@ -12,7 +12,7 @@ public class ModuleLogger extends Logger {
 
     public ModuleLogger(AbstractModule context) {
         super(context.getClass().getCanonicalName(), null);
-        this.moduleName = "[UltraCore-Module][" + context.getModuleName() + "]";
+        this.moduleName = "[UltraCore-Module][" + context.getModuleName() + "] ";
         this.setParent(Bukkit.getServer().getLogger());
         this.setLevel(Level.ALL);
     }
