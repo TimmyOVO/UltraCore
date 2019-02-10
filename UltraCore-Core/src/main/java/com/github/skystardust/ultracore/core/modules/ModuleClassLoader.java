@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.jar.JarFile;
@@ -39,19 +40,19 @@ public class ModuleClassLoader extends URLClassLoader {
             Object o = aClass.getConstructor().newInstance();
             instance = (AbstractModule) o;
             this.moduleName = instance.getModuleName();
+            Method onLoad = aClass.getMethod("onLoad");
             try {
-                aClass.getMethod("onLoad").invoke(null);
-            } catch (Exception ex) {
-                try {
-                    aClass.getMethod("onLoad").invoke(o);
-                } catch (Exception ex2) {
-                    System.out.println(file.getName() + " 无法找到onLoad方法!");
-                }
+                onLoad.invoke(o);
+            } catch (Exception exx) {
+                System.out.println("加载 " + moduleName + " 时出现了一个未知错误...");
+                exx.printStackTrace();
             }
-        } catch (IOException | ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (IOException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
             System.out.println(file.getName() + " 无法实例化 ,缺少无参构造函数!");
+        } catch (NoSuchMethodException ex) {
+            System.out.println(file.getName() + " 无法找到onLoad方法,加载失败!");
         }
     }
 

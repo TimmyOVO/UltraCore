@@ -92,7 +92,7 @@ public class SkinManager extends AbstractModule {
     }
 
     @Override
-    protected String getModuleName() {
+    public String getModuleName() {
         return "SkinManager";
     }
 }
