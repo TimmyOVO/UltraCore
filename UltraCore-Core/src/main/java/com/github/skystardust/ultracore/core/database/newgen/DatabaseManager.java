@@ -25,6 +25,7 @@ import java.net.URLClassLoader;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 @Getter
 @Setter
@@ -87,6 +88,7 @@ public class DatabaseManager {
     }
 
     private DatabaseManager openConnection0(List<Class<?>> modelClass, String name) throws DatabaseInitException {
+        Logger pluginLogger = getOwnerPlugin().getPluginLogger();
         try {
             this.modelClass = modelClass;
             this.name = name;
@@ -97,7 +99,7 @@ public class DatabaseManager {
                     Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
                     method.setAccessible(true);
                     method.invoke(urlClassLoader, cz.getProtectionDomain().getCodeSource().getLocation());
-                    getOwnerPlugin().getPluginLogger().info("已添加 " + cz.getName() + " !");
+                    pluginLogger.info("已添加 " + cz.getName() + " !");
                 } catch (Exception addURL) {
                     addURL.printStackTrace();
                 }
@@ -136,12 +138,15 @@ public class DatabaseManager {
                 Method createAllDdl = ddlGenerator1.getClass().getDeclaredMethod("generateCreateAllDdl");
                 createAllDdl.setAccessible(true);
                 String invoke = (String) createAllDdl.invoke(ddlGenerator1);
+                pluginLogger.info("Executing init script ");
+                pluginLogger.info(invoke);
                 ddlGenerator1.runScript(false, invoke, "init_script");
+                pluginLogger.info("Done...");
             } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
                 ex.printStackTrace();
             }
         }
-        getOwnerPlugin().getPluginLogger().info("初始化 " + name + " 的数据库成功!");
+        pluginLogger.info("初始化 " + name + " 的数据库成功!");
         return this;
     }
 
