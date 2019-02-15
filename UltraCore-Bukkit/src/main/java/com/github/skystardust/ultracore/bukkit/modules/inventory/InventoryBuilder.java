@@ -126,6 +126,8 @@ public class InventoryBuilder {
                         call.forEach((key, value) -> {
                             itemMap.put(key, value);
                         });
+                    } else {
+                        itemMap.clear();
                     }
                 } else {
                     itemMap = call;
