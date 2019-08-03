@@ -21,12 +21,12 @@
         <repository>
             <id>UltraCore-Repo-Release</id>
             <name>UltraCore-Repo-Release</name>
-            <url>http://work.ymmclt.com:8081/repository/maven-releases/</url>
+            <url>http://git.souep.cn/nexus/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>UltraCore-Repo-Snapshots</id>
             <name>UltraCore-Repo-Snapshots</name>
-            <url>http://work.ymmclt.com:8081/repository/maven-snapshots/</url>
+            <url>http://git.souep.cn/nexus/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
     <properties>
