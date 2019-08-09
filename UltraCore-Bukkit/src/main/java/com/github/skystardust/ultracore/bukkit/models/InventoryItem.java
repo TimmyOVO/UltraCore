@@ -63,6 +63,9 @@ public class InventoryItem {
                     }
                 }
             }
+            if (linkedTreeMap.containsKey("unbreakable")) {
+                itemMeta.setUnbreakable(((boolean) linkedTreeMap.get("unbreakable")));
+            }
             result.setItemMeta(itemMeta);
         }
 
