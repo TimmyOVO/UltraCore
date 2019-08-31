@@ -1,6 +1,5 @@
 package com.github.skystardust.ultracore.bukkit.models;
 
-import com.google.gson.internal.LinkedTreeMap;
 import lombok.Builder;
 import lombok.Data;
 import org.bukkit.*;
@@ -72,15 +71,15 @@ public class InventoryItem {
                 return result;
             }
             ItemMeta itemMeta = Bukkit.getItemFactory().getItemMeta(type);
-            Map linkedTreeMap = (Map) raw;
-            if (linkedTreeMap.containsKey("displayName")) {
-                itemMeta.setDisplayName((String) linkedTreeMap.get("displayName"));
+            Map rawMap = (Map) raw;
+            if (rawMap.containsKey("displayName")) {
+                itemMeta.setDisplayName((String) rawMap.get("displayName"));
             }
-            if (linkedTreeMap.containsKey("lore")) {
-                itemMeta.setLore(((List<String>) ((LinkedTreeMap) raw).get("lore")));
+            if (rawMap.containsKey("lore")) {
+                itemMeta.setLore(((List<String>) ((Map) raw).get("lore")));
             }
-            if (linkedTreeMap.containsKey("enchantments")) {
-                LinkedTreeMap<String, Integer> enchantments = (LinkedTreeMap<String, Integer>) linkedTreeMap.get("enchantments");
+            if (rawMap.containsKey("enchantments")) {
+                Map<String, Integer> enchantments = (Map<String, Integer>) rawMap.get("enchantments");
                 if (enchantments != null) {
 
                     for (Object o : enchantments.entrySet()) {
@@ -95,11 +94,11 @@ public class InventoryItem {
                     }
                 }
             }
-            if (linkedTreeMap.containsKey("unbreakable")) {
-                itemMeta.setUnbreakable(((boolean) linkedTreeMap.get("unbreakable")));
+            if (rawMap.containsKey("unbreakable")) {
+                itemMeta.setUnbreakable(((boolean) rawMap.get("unbreakable")));
             }
-            if (type == Material.SKULL_ITEM && damage == 3 && linkedTreeMap.containsKey("profile")) {
-                LinkedTreeMap<String, Object> profile = (LinkedTreeMap<String, Object>) linkedTreeMap.get("profile");
+            if (type == Material.SKULL_ITEM && damage == 3 && rawMap.containsKey("profile")) {
+                Map<String, Object> profile = (Map<String, Object>) rawMap.get("profile");
                 ((SkullMeta) itemMeta).setOwningPlayer(new OfflinePlayer() {
                     @Override
                     public boolean isOnline() {
@@ -173,11 +172,11 @@ public class InventoryItem {
                 });
             }
 
-            if (linkedTreeMap.containsKey("potions")) {
-                Map<String, String> potion = (Map<String, String>) linkedTreeMap.get("potions");
+            if (rawMap.containsKey("potions")) {
+                Map<String, String> potion = (Map<String, String>) rawMap.get("potions");
                 PotionMeta potionMeta = (PotionMeta) itemMeta;
-                if (linkedTreeMap.containsKey("color")) {
-                    String[] color = ((String) linkedTreeMap.get("color")).split(",");
+                if (rawMap.containsKey("color")) {
+                    String[] color = ((String) rawMap.get("color")).split(",");
                     potionMeta.setColor(Color.fromRGB(Integer.valueOf(color[0]), Integer.valueOf(color[1]), Integer.valueOf(color[2])));
                 }
                 potion.forEach((effect, data) -> {
