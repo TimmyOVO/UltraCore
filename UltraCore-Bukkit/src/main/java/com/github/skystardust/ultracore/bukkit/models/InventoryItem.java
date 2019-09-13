@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -33,6 +34,10 @@ public class InventoryItem {
                     potionMap.put(customEffect.getType().getName(), customEffect.getAmplifier() + "," + customEffect.getDuration());
                 }
                 metaMap.put("potions", potionMap);
+            }
+            PotionData basePotionData = ((PotionMeta) meta).getBasePotionData();
+            if (basePotionData != null) {
+                itemstackData.put("damage", basePotionData.getType().getDamageValue());
             }
             if (((PotionMeta) meta).hasDisplayName()) {
                 metaMap.put("displayName", ((PotionMeta) meta).getDisplayName());
@@ -179,6 +184,7 @@ public class InventoryItem {
                     String[] color = ((String) rawMap.get("color")).split(",");
                     potionMeta.setColor(Color.fromRGB(Integer.valueOf(color[0]), Integer.valueOf(color[1]), Integer.valueOf(color[2])));
                 }
+
                 potion.forEach((effect, data) -> {
                     String[] split = data.split(",");
                     potionMeta.addCustomEffect(new PotionEffect(PotionEffectType.getByName(effect), Integer.valueOf(split[0]), Integer.valueOf(split[1])), true);
