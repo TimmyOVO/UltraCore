@@ -18,16 +18,13 @@
         <module>UltraCore-BungeeCord</module>
     </modules>
     <distributionManagement>
+
         <repository>
-            <id>UltraCore-Repo-Release</id>
-            <name>UltraCore-Repo-Release</name>
-            <url>http://work.ymmclt.com/nexus/repository/maven-releases/</url>
+            <id>github</id>
+            <name>GitHub Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/TimmyOVO/UltraCore</url>
         </repository>
-        <snapshotRepository>
-            <id>UltraCore-Repo-Snapshots</id>
-            <name>UltraCore-Repo-Snapshots</name>
-            <url>http://work.ymmclt.com/nexus/repository/maven-snapshots/</url>
-        </snapshotRepository>
+
     </distributionManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
