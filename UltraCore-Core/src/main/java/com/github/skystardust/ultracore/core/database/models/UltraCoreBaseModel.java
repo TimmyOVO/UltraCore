@@ -1,6 +1,5 @@
 package com.github.skystardust.ultracore.core.database.models;
 
-import io.ebean.Ebean;
 import io.ebean.EbeanServer;
 import io.ebean.Model;
 import io.ebean.bean.EntityBean;
