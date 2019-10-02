@@ -187,11 +187,11 @@ public final class UltraCore extends JavaPlugin implements PluginInstance {
                                     if (args.length < 1) {
                                         return true;
                                     }
-                                    if (JarModuleManager.loadModule(new File("./uc-modules",args[0]+".jar"))) {
-                                        commandSender.sendMessage("加载 "+args[0]+" 已经成功!");
+                                    if (JarModuleManager.loadModule(new File("./uc-modules", args[0] + ".jar"))) {
+                                        commandSender.sendMessage("加载 " + args[0] + " 已经成功!");
                                         return true;
                                     }
-                                    commandSender.sendMessage("无法加载 "+args[0]);
+                                    commandSender.sendMessage("无法加载 " + args[0]);
                                     return true;
                                 })
                                 .build())
@@ -202,18 +202,18 @@ public final class UltraCore extends JavaPlugin implements PluginInstance {
                                     if (args.length < 1) {
                                         return true;
                                     }
-                                    if (JarModuleManager.unloadModule(args[0])!=null) {
-                                        commandSender.sendMessage("卸载 "+args[0]+" 已经成功!");
+                                    if (JarModuleManager.unloadModule(args[0]) != null) {
+                                        commandSender.sendMessage("卸载 " + args[0] + " 已经成功!");
                                         return true;
                                     }
-                                    commandSender.sendMessage("无法卸载 "+args[0]);
+                                    commandSender.sendMessage("无法卸载 " + args[0]);
                                     return true;
                                 })
                                 .build())
                         .withCommandSpecExecutor((commandSender, args) -> {
                             sendMessage(commandSender, "/uc mod reload [名称] - 重载Module");
-                            sendMessage(commandSender,"/uc mod load [文件名] - 加载文件");
-                            sendMessage(commandSender,"/uc mod unload [名称] - 卸载Module");
+                            sendMessage(commandSender, "/uc mod load [文件名] - 加载文件");
+                            sendMessage(commandSender, "/uc mod unload [名称] - 卸载Module");
                             sendMessage(commandSender, "/uc mod list - 列出所有已经加载的Module");
                             return true;
                         })
