@@ -46,6 +46,18 @@
                     </relocations>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>io.repaint.maven</groupId>
+                <artifactId>tiles-maven-plugin</artifactId>
+                <version>2.10</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <tiles>
+                        <tile>org.avaje.tile:java-compile:1.1</tile>
+                        <tile>io.ebean.tile:enhancement:5.2</tile>
+                    </tiles>
+                </configuration>
+            </plugin>
         </plugins>
         <resources>
             <resource>
