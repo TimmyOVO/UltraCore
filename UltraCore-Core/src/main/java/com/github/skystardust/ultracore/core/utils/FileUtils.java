@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 public class FileUtils {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static boolean ENABLE_YAML_MODE = true;
-    
+
     public static String readFileContent(File file) {
         String json = null;
         File yamlFile = new File(file.getPath() + ".yml");
