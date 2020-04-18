@@ -1,71 +1,41 @@
 package com.github.skystardust.ultracore.core.configuration;
 
-import javax.annotation.Nonnull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.annotation.Nonnull;
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class SQLConfiguration {
     private String url;
     private String driver;
     private String username;
     private String password;
-
-    public SQLConfiguration(String url, String driver, String username, String password) {
-        this.url = url;
-        this.driver = driver;
-        this.username = username;
-        this.password = password;
-    }
-
-    public SQLConfiguration() {
-    }
+    private Boolean autoCommit;
 
     private SQLConfiguration(Builder builder) {
         setUrl(builder.url);
         setDriver(builder.driver);
         setUsername(builder.username);
         setPassword(builder.password);
+        setAutoCommit(builder.autoCommit);
     }
 
     public static Builder newBuilder() {
         return new Builder();
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getDriver() {
-        return driver;
-    }
-
-    public void setDriver(String driver) {
-        this.driver = driver;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public static final class Builder {
         private String url;
         private String driver;
         private String username;
         private String password;
+        private Boolean autoCommit;
 
         private Builder() {
         }
@@ -91,6 +61,12 @@ public class SQLConfiguration {
         @Nonnull
         public Builder withPassword(@Nonnull String val) {
             password = val;
+            return this;
+        }
+
+        @Nonnull
+        public Builder withAutoCommit(@Nonnull Boolean val) {
+            autoCommit = val;
             return this;
         }
 
