@@ -16,6 +16,7 @@ import io.ebean.config.ServerConfig;
 import io.ebean.datasource.DataSourceConfig;
 import io.ebeaninternal.api.SpiEbeanServer;
 import io.ebeaninternal.dbmigration.DdlGenerator;
+import io.ebeaninternal.server.core.DefaultServer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -99,6 +100,7 @@ public class DatabaseManagerBase {
             dataSourceConfig.setPassword(sqlConfiguration.getPassword());
             dataSourceConfig.setUrl(sqlConfiguration.getUrl());
             dataSourceConfig.setDriver(sqlConfiguration.getDriver());
+            if(sqlConfiguration.getAutoCommit()!=null)
             dataSourceConfig.setAutoCommit(sqlConfiguration.getAutoCommit());
             ServerConfig serverConfig = new ServerConfig();
             HikariConfig hikariConfig = new HikariConfig();
@@ -106,14 +108,17 @@ public class DatabaseManagerBase {
             hikariConfig.setPassword(sqlConfiguration.getPassword());
             hikariConfig.setJdbcUrl(sqlConfiguration.getUrl());
             hikariConfig.setDriverClassName(sqlConfiguration.getDriver());
+            if(sqlConfiguration.getAutoCommit()!=null)
+            hikariConfig.setAutoCommit(sqlConfiguration.getAutoCommit());
             HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
             serverConfig.setName(name);
             serverConfig.setObjectMapper(new ObjectMapper().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII,true));
             modelClass.forEach(serverConfig::addClass);
             serverConfig.setDataSourceConfig(dataSourceConfig);
             serverConfig.setDataSource(hikariDataSource);
+            if(sqlConfiguration.getAutoCommit()!=null)
+            serverConfig.setAutoCommitMode(sqlConfiguration.getAutoCommit());
             modelClass.forEach(c -> Thread.currentThread().setContextClassLoader(c.getClassLoader()));
-
             this.ebeanServer = EbeanServerFactory.create(serverConfig);
         } catch (Exception e) {
             throw new DatabaseInitException(e.getMessage(), e.getCause());
@@ -121,15 +126,7 @@ public class DatabaseManagerBase {
         try {
             ebeanServer.find(modelClass.get(0)).setMaxRows(1).findOneOrEmpty();
         } catch (Exception e) {
-            Field ddlGenerator = null;
-            try {
-                ddlGenerator = ebeanServer.getClass().getField("ddlGenerator");
-                ddlGenerator.setAccessible(true);
-                val gen = (DdlGenerator) ddlGenerator.get(ebeanServer);
-                gen.execute(false);
-            } catch (NoSuchFieldException | IllegalAccessException ee) {
-                throw new DatabaseInitException("Error",ee);
-            }
+            DefaultServer.class.cast(ebeanServer).executePlugins(false);
         }
         getOwnerPlugin().getPluginLogger().info("初始化数据库 " + name + " 已成功!");
         return this;
