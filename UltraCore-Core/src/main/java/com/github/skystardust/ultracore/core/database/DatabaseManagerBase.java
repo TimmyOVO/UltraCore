@@ -112,7 +112,7 @@ public class DatabaseManagerBase {
             hikariConfig.setAutoCommit(sqlConfiguration.getAutoCommit());
             HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
             serverConfig.setName(name);
-            serverConfig.setObjectMapper(new ObjectMapper().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII,true));
+            //serverConfig.setObjectMapper(new ObjectMapper().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII,true));
             modelClass.forEach(serverConfig::addClass);
             serverConfig.setDataSourceConfig(dataSourceConfig);
             serverConfig.setDataSource(hikariDataSource);
