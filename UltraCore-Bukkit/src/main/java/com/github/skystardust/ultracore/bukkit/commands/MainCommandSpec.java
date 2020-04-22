@@ -44,7 +44,6 @@ public class MainCommandSpec extends CommandSpec {
             declaredConstructor.setAccessible(true);
             PluginCommand commandToReg = declaredConstructor.newInstance(aliases.get(0), UltraCore.getUltraCore());
             commandToReg.setTabCompleter((commandSender, command, s, args) -> {
-                //找到最后一个元素
                 List<SubCommandSpec> temp = null;
                 for (int i = 0; i < args.length; i++) {
                     String arg = args[i];
@@ -78,13 +77,10 @@ public class MainCommandSpec extends CommandSpec {
                     }
                 }
                 if (temp != null){
-                    //返回最后一个的所有子命令
-                    System.out.println("all sub commands matched");
                     return temp.stream()
                             .flatMap(subCommandSpec -> subCommandSpec.getAliases().stream())
                             .collect(Collectors.toList());
                 }
-                System.out.println("no this is impossible");
                 return Collections.emptyList();
 
             });
