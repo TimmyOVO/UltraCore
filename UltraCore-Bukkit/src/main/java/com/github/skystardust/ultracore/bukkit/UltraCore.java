@@ -1,5 +1,6 @@
 package com.github.skystardust.ultracore.bukkit;
 
+import com.github.skystardust.ultracore.bukkit.commands.CommandSpecExecutor;
 import com.github.skystardust.ultracore.bukkit.commands.MainCommandSpec;
 import com.github.skystardust.ultracore.bukkit.commands.SubCommandSpec;
 import com.github.skystardust.ultracore.core.PluginInstance;
@@ -47,10 +48,68 @@ public final class UltraCore extends JavaPlugin implements PluginInstance {
                         .withDescription("test arg1")
                         .withPermission("permission")
                         .childCommandSpec(SubCommandSpec.newBuilder()
+                                .addAlias("aarg2")
+                                .addAlias("aa2")
+                                .withDescription("test aarg2")
+                                .withPermission("permission")
+                                .childCommandSpec(SubCommandSpec.newBuilder()
+                                        .addAlias("aarg3")
+                                        .addAlias("aa3")
+                                        .childCommandSpec(SubCommandSpec.newBuilder()
+                                                .addAlias("aarg4")
+                                                .addAlias("aa4")
+                                                .childCommandSpec(SubCommandSpec.newBuilder()
+                                                        .addAlias("aarg5")
+                                                        .addAlias("aa5")
+                                                        .withCommandSpecExecutor((commandSender, args) -> {
+                                                            commandSender.sendMessage("test aargs5");
+                                                            return true;
+                                                        })
+                                                        .build())
+                                                .withCommandSpecExecutor((commandSender, args) -> {
+                                                    commandSender.sendMessage("test aargs4");
+                                                    return true;
+                                                })
+                                                .build())
+                                        .withCommandSpecExecutor((commandSender, args) -> {
+                                            commandSender.sendMessage("test aargs3");
+                                            return true;
+                                        })
+                                        .build())
+                                .withCommandSpecExecutor((commandSender, args) -> {
+                                    commandSender.sendMessage("test aargs2");
+                                    return true;
+                                })
+                                .build())
+                        .childCommandSpec(SubCommandSpec.newBuilder()
                                 .addAlias("arg2")
                                 .addAlias("a2")
                                 .withDescription("test arg2")
                                 .withPermission("permission")
+                                .childCommandSpec(SubCommandSpec.newBuilder()
+                                        .addAlias("arg3")
+                                        .addAlias("a3")
+                                        .childCommandSpec(SubCommandSpec.newBuilder()
+                                                .addAlias("arg4")
+                                                .addAlias("a4")
+                                                .childCommandSpec(SubCommandSpec.newBuilder()
+                                                        .addAlias("arg5")
+                                                        .addAlias("a5")
+                                                        .withCommandSpecExecutor((commandSender, args) -> {
+                                                            commandSender.sendMessage("test args5");
+                                                            return true;
+                                                        })
+                                                        .build())
+                                                .withCommandSpecExecutor((commandSender, args) -> {
+                                                    commandSender.sendMessage("test args4");
+                                                    return true;
+                                                })
+                                                .build())
+                                        .withCommandSpecExecutor((commandSender, args) -> {
+                                            commandSender.sendMessage("test args3");
+                                            return true;
+                                        })
+                                        .build())
                                 .withCommandSpecExecutor((commandSender, args) -> {
                                     commandSender.sendMessage("test args2");
                                     return true;

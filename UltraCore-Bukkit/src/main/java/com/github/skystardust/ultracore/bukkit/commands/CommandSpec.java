@@ -2,11 +2,13 @@ package com.github.skystardust.ultracore.bukkit.commands;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public abstract class CommandSpec {
     protected CommandSpecExecutor commandSpecExecutor;
     protected String permission;
