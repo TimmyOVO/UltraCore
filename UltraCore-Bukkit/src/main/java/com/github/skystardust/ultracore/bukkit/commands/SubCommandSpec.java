@@ -20,6 +20,7 @@ public class SubCommandSpec extends CommandSpec {
         setDescription(builder.description);
         setAliases(builder.aliases);
         setSubCommandSpecList(builder.subCommandSpecList);
+        setTabSpecExecutor(builder.commandSpecTabExecutor);
     }
 
     public static Builder newBuilder() {
@@ -50,6 +51,7 @@ public class SubCommandSpec extends CommandSpec {
 
     public static final class Builder {
         private CommandSpecExecutor commandSpecExecutor;
+        private CommandSpecTabExecutor commandSpecTabExecutor;
         private String permission;
         private String description;
         private List<String> aliases;
@@ -61,6 +63,12 @@ public class SubCommandSpec extends CommandSpec {
         @Nonnull
         public Builder withCommandSpecExecutor(@Nonnull CommandSpecExecutor val) {
             commandSpecExecutor = val;
+            return this;
+        }
+
+        @Nonnull
+        public Builder withCommandSpecTabExecutor(@Nonnull CommandSpecTabExecutor val) {
+            commandSpecTabExecutor = val;
             return this;
         }
 
