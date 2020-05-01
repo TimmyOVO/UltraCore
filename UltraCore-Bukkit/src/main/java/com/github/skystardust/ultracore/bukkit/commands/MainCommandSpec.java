@@ -46,15 +46,15 @@ public class MainCommandSpec extends CommandSpec {
             declaredConstructor.setAccessible(true);
             PluginCommand commandToReg = declaredConstructor.newInstance(aliases.get(0), UltraCore.getUltraCore());
             commandToReg.setTabCompleter((commandSender, command, s, args) -> {
-                List<SubCommandSpec> temp = null;
+                List<SubCommandSpec> parentCommandSpec = null;
                 for (int i = 0; i < args.length; i++) {
                     String arg = args[i];
-                    if (temp == null){
-                        List<SubCommandSpec> collect = this.childMainCommandSpecList.stream()
+                    if (parentCommandSpec == null){
+                        List<SubCommandSpec> allMatchedSubCommands = this.childMainCommandSpecList.stream()
                                 .filter(subCommandSpec -> subCommandSpec.getAliases().contains(arg))
                                 .collect(Collectors.toList());
-                        if (!collect.isEmpty()){
-                            temp = collect;
+                        if (!allMatchedSubCommands.isEmpty()){
+                            parentCommandSpec = allMatchedSubCommands;
                         }else {
                             List<String> retArgs=null;
                             if(this.tabSpecExecutor!=null){
@@ -70,12 +70,12 @@ public class MainCommandSpec extends CommandSpec {
                             }
                         }
                     }else {
-                        List<SubCommandSpec> collect = temp.stream()
+                        List<SubCommandSpec> allMatchedSubCommands = parentCommandSpec.stream()
                                 .filter(subCommandSpec -> subCommandSpec.getSubCommandSpecList().stream().anyMatch(subCommandSpec1 -> subCommandSpec1.getAliases().contains(arg)))
                                 .flatMap(subCommandSpec -> subCommandSpec.getSubCommandSpecList().stream())
                                 .collect(Collectors.toList());
-                        if (!collect.isEmpty()){
-                            temp = collect;
+                        if (!allMatchedSubCommands.isEmpty()){
+                            parentCommandSpec = allMatchedSubCommands;
                         }else {
                             int finalI = i;
                             List<String> retArgs=null;
@@ -94,8 +94,8 @@ public class MainCommandSpec extends CommandSpec {
                         }
                     }
                 }
-                if (temp != null){
-                    return temp.stream()
+                if (parentCommandSpec != null){
+                    return parentCommandSpec.stream()
                             .flatMap(subCommandSpec -> subCommandSpec.getAliases().stream())
                             .collect(Collectors.toList());
                 }
