@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
@@ -30,6 +31,7 @@ public class MainCommandSpec extends CommandSpec {
         setDescription(builder.description);
         setAliases(builder.aliases);
         setChildMainCommandSpecList(builder.childMainCommandSpecList);
+        setTabSpecExecutor(builder.commandSpecTabExecutor);
     }
 
     public static Builder newBuilder() {
@@ -54,10 +56,18 @@ public class MainCommandSpec extends CommandSpec {
                         if (!allMatchedSubCommands.isEmpty()){
                             parentCommandSpec = allMatchedSubCommands;
                         }else {
-                            return this.childMainCommandSpecList.stream()
-                                    .flatMap(subCommandSpec -> subCommandSpec.getAliases().stream())
-                                    .filter(s1 -> s1.contains(arg))
-                                    .collect(Collectors.toList());
+                            List<String> retArgs=null;
+                            if(this.tabSpecExecutor!=null){
+                                retArgs = tabSpecExecutor.executeTab(commandSender,args);
+                            }
+                            if(retArgs==null){
+                                return this.childMainCommandSpecList.stream()
+                                        .flatMap(subCommandSpec -> subCommandSpec.getAliases().stream())
+                                        .filter(s1 -> s1.contains(arg))
+                                        .collect(Collectors.toList());
+                            }else{
+                                return retArgs;
+                            }
                         }
                     }else {
                         List<SubCommandSpec> allMatchedSubCommands = parentCommandSpec.stream()
@@ -68,11 +78,19 @@ public class MainCommandSpec extends CommandSpec {
                             parentCommandSpec = allMatchedSubCommands;
                         }else {
                             int finalI = i;
-                            parentCommandSpec.removeIf(subCommandSpec -> !subCommandSpec.getAliases().contains(args[finalI - 1]));
-                            return parentCommandSpec.stream()
-                                    .flatMap(subCommandSpec -> subCommandSpec.getSubCommandSpecList().stream().flatMap(subCommandSpec1 -> subCommandSpec1.getAliases().stream()))
-                                    .filter(s1 -> s1.contains(arg))
-                                    .collect(Collectors.toList());
+                            List<String> retArgs=null;
+                            if(this.tabSpecExecutor!=null){
+                                retArgs = tabSpecExecutor.executeTab(commandSender,Arrays.stream(args).skip(finalI).toArray(String[]::new));
+                            }
+                            if(retArgs==null) {
+                                temp.removeIf(subCommandSpec -> !subCommandSpec.getAliases().contains(args[finalI - 1]));
+                                return temp.stream()
+                                        .flatMap(subCommandSpec -> subCommandSpec.getSubCommandSpecList().stream().flatMap(subCommandSpec1 -> subCommandSpec1.getAliases().stream()))
+                                        .filter(s1 -> s1.contains(arg))
+                                        .collect(Collectors.toList());
+                            }else{
+                                return retArgs;
+                            }
                         }
                     }
                 }
@@ -118,6 +136,7 @@ public class MainCommandSpec extends CommandSpec {
 
     public static final class Builder {
         private CommandSpecExecutor commandSpecExecutor;
+        private CommandSpecTabExecutor commandSpecTabExecutor;
         private String permission;
         private String description;
         private List<String> aliases;
@@ -129,6 +148,12 @@ public class MainCommandSpec extends CommandSpec {
         @Nonnull
         public Builder withCommandSpecExecutor(@Nonnull CommandSpecExecutor val) {
             commandSpecExecutor = val;
+            return this;
+        }
+
+        @Nonnull
+        public Builder withCommandSpecTabExecutor(@Nonnull CommandSpecTabExecutor val) {
+            commandSpecTabExecutor = val;
             return this;
         }
 

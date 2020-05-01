@@ -111,12 +111,18 @@ public class DatabaseManager {
             dataSourceConfig.setPassword(sqlConfiguration.getPassword());
             dataSourceConfig.setUrl(sqlConfiguration.getUrl());
             dataSourceConfig.setDriver(sqlConfiguration.getDriver());
+            if(sqlConfiguration.getAutoCommit()!=null){
+                dataSourceConfig.setAutoCommit(sqlConfiguration.getAutoCommit());
+            }
             ServerConfig serverConfig = new ServerConfig();
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setUsername(sqlConfiguration.getUsername());
             hikariConfig.setPassword(sqlConfiguration.getPassword());
             hikariConfig.setJdbcUrl(sqlConfiguration.getUrl());
             hikariConfig.setDriverClassName(sqlConfiguration.getDriver());
+            if(sqlConfiguration.getAutoCommit()!=null){
+                hikariConfig.setAutoCommit(sqlConfiguration.getAutoCommit());
+            }
             HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
             serverConfig.setName(name);
             modelClass.forEach(serverConfig::addClass);
