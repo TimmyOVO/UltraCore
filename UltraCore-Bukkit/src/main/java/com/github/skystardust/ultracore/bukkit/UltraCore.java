@@ -1,6 +1,5 @@
 package com.github.skystardust.ultracore.bukkit;
 
-import com.github.skystardust.ultracore.bukkit.commands.CommandSpecExecutor;
 import com.github.skystardust.ultracore.bukkit.commands.MainCommandSpec;
 import com.github.skystardust.ultracore.bukkit.commands.SubCommandSpec;
 import com.github.skystardust.ultracore.core.PluginInstance;

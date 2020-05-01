@@ -1,11 +1,9 @@
 package com.github.skystardust.ultracore.bukkit.commands;
 
 import com.github.skystardust.ultracore.bukkit.UltraCore;
-import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
@@ -31,7 +29,6 @@ public class MainCommandSpec extends CommandSpec {
         setDescription(builder.description);
         setAliases(builder.aliases);
         setChildMainCommandSpecList(builder.childMainCommandSpecList);
-        setTabSpecExecutor(builder.commandSpecTabExecutor);
     }
 
     public static Builder newBuilder() {
@@ -49,52 +46,36 @@ public class MainCommandSpec extends CommandSpec {
                 List<SubCommandSpec> parentCommandSpec = null;
                 for (int i = 0; i < args.length; i++) {
                     String arg = args[i];
-                    if (parentCommandSpec == null){
+                    if (parentCommandSpec == null) {
                         List<SubCommandSpec> allMatchedSubCommands = this.childMainCommandSpecList.stream()
                                 .filter(subCommandSpec -> subCommandSpec.getAliases().contains(arg))
                                 .collect(Collectors.toList());
-                        if (!allMatchedSubCommands.isEmpty()){
+                        if (!allMatchedSubCommands.isEmpty()) {
                             parentCommandSpec = allMatchedSubCommands;
-                        }else {
-                            List<String> retArgs=null;
-                            if(this.tabSpecExecutor!=null){
-                                retArgs = tabSpecExecutor.executeTab(commandSender,args);
-                            }
-                            if(retArgs==null){
-                                return this.childMainCommandSpecList.stream()
-                                        .flatMap(subCommandSpec -> subCommandSpec.getAliases().stream())
-                                        .filter(s1 -> s1.contains(arg))
-                                        .collect(Collectors.toList());
-                            }else{
-                                return retArgs;
-                            }
+                        } else {
+                            return this.childMainCommandSpecList.stream()
+                                    .flatMap(subCommandSpec -> subCommandSpec.getAliases().stream())
+                                    .filter(s1 -> s1.contains(arg))
+                                    .collect(Collectors.toList());
                         }
-                    }else {
+                    } else {
                         List<SubCommandSpec> allMatchedSubCommands = parentCommandSpec.stream()
                                 .filter(subCommandSpec -> subCommandSpec.getSubCommandSpecList().stream().anyMatch(subCommandSpec1 -> subCommandSpec1.getAliases().contains(arg)))
                                 .flatMap(subCommandSpec -> subCommandSpec.getSubCommandSpecList().stream())
                                 .collect(Collectors.toList());
-                        if (!allMatchedSubCommands.isEmpty()){
+                        if (!allMatchedSubCommands.isEmpty()) {
                             parentCommandSpec = allMatchedSubCommands;
-                        }else {
+                        } else {
                             int finalI = i;
-                            List<String> retArgs=null;
-                            if(this.tabSpecExecutor!=null){
-                                retArgs = tabSpecExecutor.executeTab(commandSender,Arrays.stream(args).skip(finalI).toArray(String[]::new));
-                            }
-                            if(retArgs==null) {
-                                temp.removeIf(subCommandSpec -> !subCommandSpec.getAliases().contains(args[finalI - 1]));
-                                return temp.stream()
-                                        .flatMap(subCommandSpec -> subCommandSpec.getSubCommandSpecList().stream().flatMap(subCommandSpec1 -> subCommandSpec1.getAliases().stream()))
-                                        .filter(s1 -> s1.contains(arg))
-                                        .collect(Collectors.toList());
-                            }else{
-                                return retArgs;
-                            }
+                            parentCommandSpec.removeIf(subCommandSpec -> !subCommandSpec.getAliases().contains(args[finalI - 1]));
+                            return parentCommandSpec.stream()
+                                    .flatMap(subCommandSpec -> subCommandSpec.getSubCommandSpecList().stream().flatMap(subCommandSpec1 -> subCommandSpec1.getAliases().stream()))
+                                    .filter(s1 -> s1.contains(arg))
+                                    .collect(Collectors.toList());
                         }
                     }
                 }
-                if (parentCommandSpec != null){
+                if (parentCommandSpec != null) {
                     return parentCommandSpec.stream()
                             .flatMap(subCommandSpec -> subCommandSpec.getAliases().stream())
                             .collect(Collectors.toList());
@@ -136,7 +117,6 @@ public class MainCommandSpec extends CommandSpec {
 
     public static final class Builder {
         private CommandSpecExecutor commandSpecExecutor;
-        private CommandSpecTabExecutor commandSpecTabExecutor;
         private String permission;
         private String description;
         private List<String> aliases;
@@ -148,12 +128,6 @@ public class MainCommandSpec extends CommandSpec {
         @Nonnull
         public Builder withCommandSpecExecutor(@Nonnull CommandSpecExecutor val) {
             commandSpecExecutor = val;
-            return this;
-        }
-
-        @Nonnull
-        public Builder withCommandSpecTabExecutor(@Nonnull CommandSpecTabExecutor val) {
-            commandSpecTabExecutor = val;
             return this;
         }
 
@@ -215,7 +189,7 @@ public class MainCommandSpec extends CommandSpec {
     @AllArgsConstructor
     @lombok.Builder
     public static final class TabPair<T, V> {
-        private T key;
         public V value;
+        private T key;
     }
 }

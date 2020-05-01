@@ -11,7 +11,6 @@ import java.util.List;
 @ToString
 public abstract class CommandSpec {
     protected CommandSpecExecutor commandSpecExecutor;
-    protected CommandSpecTabExecutor tabSpecExecutor;
     protected String permission;
     protected String description;
     protected List<String> aliases;
