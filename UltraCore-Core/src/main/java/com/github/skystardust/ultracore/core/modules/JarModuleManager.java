@@ -53,7 +53,7 @@ public class JarModuleManager {
                         .stream()
                         .filter(en -> en.getKey().equalsIgnoreCase(name))
                         .findAny()
-                        .ifPresent(entry->modulesMap.remove(entry.getKey(),entry.getValue()));
+                        .ifPresent(entry -> modulesMap.remove(entry.getKey(), entry.getValue()));
                 return ((ModuleClassLoader) classLoader).getFile();
             }
         }

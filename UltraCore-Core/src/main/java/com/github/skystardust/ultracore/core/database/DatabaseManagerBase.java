@@ -1,8 +1,5 @@
 package com.github.skystardust.ultracore.core.database;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.skystardust.ultracore.core.PluginInstance;
 import com.github.skystardust.ultracore.core.configuration.SQLConfiguration;
 import com.github.skystardust.ultracore.core.exceptions.ConfigurationException;
@@ -14,17 +11,12 @@ import io.ebean.EbeanServer;
 import io.ebean.EbeanServerFactory;
 import io.ebean.config.ServerConfig;
 import io.ebean.datasource.DataSourceConfig;
-import io.ebeaninternal.api.SpiEbeanServer;
-import io.ebeaninternal.dbmigration.DdlGenerator;
 import io.ebeaninternal.server.core.DefaultServer;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
-import lombok.val;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -100,24 +92,24 @@ public class DatabaseManagerBase {
             dataSourceConfig.setPassword(sqlConfiguration.getPassword());
             dataSourceConfig.setUrl(sqlConfiguration.getUrl());
             dataSourceConfig.setDriver(sqlConfiguration.getDriver());
-            if(sqlConfiguration.getAutoCommit()!=null)
-            dataSourceConfig.setAutoCommit(sqlConfiguration.getAutoCommit());
+            if (sqlConfiguration.getAutoCommit() != null)
+                dataSourceConfig.setAutoCommit(sqlConfiguration.getAutoCommit());
             ServerConfig serverConfig = new ServerConfig();
             HikariConfig hikariConfig = new HikariConfig();
             hikariConfig.setUsername(sqlConfiguration.getUsername());
             hikariConfig.setPassword(sqlConfiguration.getPassword());
             hikariConfig.setJdbcUrl(sqlConfiguration.getUrl());
             hikariConfig.setDriverClassName(sqlConfiguration.getDriver());
-            if(sqlConfiguration.getAutoCommit()!=null)
-            hikariConfig.setAutoCommit(sqlConfiguration.getAutoCommit());
+            if (sqlConfiguration.getAutoCommit() != null)
+                hikariConfig.setAutoCommit(sqlConfiguration.getAutoCommit());
             HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
             serverConfig.setName(name);
             //serverConfig.setObjectMapper(new ObjectMapper().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII,true));
             modelClass.forEach(serverConfig::addClass);
             serverConfig.setDataSourceConfig(dataSourceConfig);
             serverConfig.setDataSource(hikariDataSource);
-            if(sqlConfiguration.getAutoCommit()!=null)
-            serverConfig.setAutoCommitMode(sqlConfiguration.getAutoCommit());
+            if (sqlConfiguration.getAutoCommit() != null)
+                serverConfig.setAutoCommitMode(sqlConfiguration.getAutoCommit());
             modelClass.forEach(c -> Thread.currentThread().setContextClassLoader(c.getClassLoader()));
             this.ebeanServer = EbeanServerFactory.create(serverConfig);
         } catch (Exception e) {

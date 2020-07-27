@@ -8,11 +8,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 public final class ConfigurationFormatConverter {
     private String content;
 
-    private ConfigurationFormatConverter(String content){
+    private ConfigurationFormatConverter(String content) {
         this.content = content;
     }
 
-    public static ConfigurationFormatConverter fromJson(String jsonContent){
+    public static ConfigurationFormatConverter from(String jsonContent) {
         return new ConfigurationFormatConverter(jsonContent);
     }
 

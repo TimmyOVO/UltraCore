@@ -15,50 +15,49 @@ import java.nio.charset.StandardCharsets;
 
 public class FileUtils {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static boolean ENABLE_YAML_MODE = false;
+
+    public static String readYamlFileContent(File file) {
+        try {
+            return ConfigurationFormatConverter.from(readFile(file)).toJSON();
+        } catch (JsonProcessingException | FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void writeYamlFileContent(File file, String content) {
+        try {
+            writeFile(file, ConfigurationFormatConverter.from(content).toYAML());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static String readFileContent(File file) {
         String json = null;
-        File yamlFile = new File(file.getPath() + ".yml");
-        if (ENABLE_YAML_MODE && yamlFile.exists()){
-            try {
-                String jsonContent = readFile(yamlFile);
-                json = ConfigurationFormatConverter.fromJson(jsonContent).toJSON();
-                writeFile(file,json);
-            } catch (FileNotFoundException | JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }else {
-            try {
-                json = readFile(file);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+        try {
+            json = readFile(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
         return json;
     }
 
-    public static void writeFileContent(File file, String content) {
-        if (ENABLE_YAML_MODE){
-            try {
-                writeFile(new File(file.getPath()+".yml"),ConfigurationFormatConverter.fromJson(content).toYAML());
-            } catch (JsonProcessingException ignored) {
 
-            }
-        }
-        writeFile(file,content);
+    public static void writeFileContent(File file, String content) {
+        writeFile(file, content);
     }
 
     static String readFile(File file) throws FileNotFoundException {
         StringBuilder stringBuilder = new StringBuilder();
-        Files.newReader(file, StandardCharsets.UTF_8).lines().forEach(str->{
+        Files.newReader(file, StandardCharsets.UTF_8).lines().forEach(str -> {
             stringBuilder.append(str);
             stringBuilder.append("\n");
         });
         return stringBuilder.toString();
     }
 
-    static void writeFile(File file,String content){
+    static void writeFile(File file, String content) {
         BufferedWriter bufferedWriter = null;
         try {
             bufferedWriter = Files.newWriter(file, Charset.forName("UTF-8"));

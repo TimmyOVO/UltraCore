@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.annotation.Nonnull;
+
 @Setter
 @Getter
 @AllArgsConstructor

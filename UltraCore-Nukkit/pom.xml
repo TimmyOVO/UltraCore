@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>UltraCore-Nukkit</artifactId>
-    <version>1.7-SNAPSHOT</version>
+    <version>1.8-SNAPSHOT</version>
     <build>
         <defaultGoal>clean package</defaultGoal>
         <plugins>
@@ -60,7 +60,7 @@
         <dependency>
             <groupId>com.github.skystardust</groupId>
             <artifactId>UltraCore-Core</artifactId>
-            <version>3.11-SNAPSHOT</version>
+            <version>3.12-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

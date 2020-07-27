@@ -111,7 +111,7 @@ public class DatabaseManager {
             dataSourceConfig.setPassword(sqlConfiguration.getPassword());
             dataSourceConfig.setUrl(sqlConfiguration.getUrl());
             dataSourceConfig.setDriver(sqlConfiguration.getDriver());
-            if(sqlConfiguration.getAutoCommit()!=null){
+            if (sqlConfiguration.getAutoCommit() != null) {
                 dataSourceConfig.setAutoCommit(sqlConfiguration.getAutoCommit());
             }
             ServerConfig serverConfig = new ServerConfig();
@@ -120,7 +120,7 @@ public class DatabaseManager {
             hikariConfig.setPassword(sqlConfiguration.getPassword());
             hikariConfig.setJdbcUrl(sqlConfiguration.getUrl());
             hikariConfig.setDriverClassName(sqlConfiguration.getDriver());
-            if(sqlConfiguration.getAutoCommit()!=null){
+            if (sqlConfiguration.getAutoCommit() != null) {
                 hikariConfig.setAutoCommit(sqlConfiguration.getAutoCommit());
             }
             HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
@@ -148,7 +148,7 @@ public class DatabaseManager {
                 String invoke = (String) createAllDdl.invoke(ddlGenerator1);
                 pluginLogger.info("Executing init script ");
                 pluginLogger.info(invoke);
-                ddlGenerator1.runScript(((DefaultServer)ebeanServer).getDataSource().getConnection(),false, invoke, "init_script");
+                ddlGenerator1.runScript(((DefaultServer) ebeanServer).getDataSource().getConnection(), false, invoke, "init_script");
                 pluginLogger.info("Done...");
             } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | SQLException ex) {
                 ex.printStackTrace();
