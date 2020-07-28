@@ -52,24 +52,38 @@ public class ConfigurationManager {
             }
         };
         ownPlugin.getPluginLogger().info("正在初始化 " + ownPlugin.getName() + " 的配置文件!");
-        configurationModels.forEach((fileName, result) -> {
-            ownPlugin.getPluginLogger().info("初始化配置文件 " + fileName + " 中,请稍候..!");
-            File file = new File(ownPlugin.getDataFolder(), fileName + ".conf");
-            if (!file.exists()) {
-                ownPlugin.getPluginLogger().info("正在创建配置文件 " + fileName + " 的模板.");
-                FileUtils.writeFileContent(file, FileUtils.GSON.toJson(result));
-                ownPlugin.getPluginLogger().info("创建 " + fileName + " 的模板完成!");
-            }
-            ownPlugin.getPluginLogger().info("正在读取配置文件 " + fileName + " 的现有存档.");
-            data.put(fileName, FileUtils.GSON.fromJson(FileUtils.readFileContent(file), result.getClass()));
-            ownPlugin.getPluginLogger().info("读取配置文件 " + fileName + " 已成功.");
-        });
+        configurationModels.forEach(this::loadConfiguration);
         ownPlugin.getPluginLogger().info("初始化 " + ownPlugin.getName() + " 已全部成功!");
         return ConfigurationClassSetter.builder()
                 .classToSet(clazz)
                 .classInstance(o)
                 .configurationData(data).build();
     }
+
+    public void loadConfiguration(String fileName, Object defaultValue) {
+        loadConfiguration(new File(getOwnPlugin().getDataFolder(), fileName + ".yml"), defaultValue);
+    }
+
+    public void loadConfiguration(File file, Object defaultValue) {
+        getOwnPlugin().getPluginLogger().info("初始化配置文件 " + file.getName() + " 中,请稍候..!");
+        if (!file.exists()) {
+            getOwnPlugin().getPluginLogger().info("正在创建配置文件 " + file.getName() + " 的模板.");
+            writeConfigurationFile(file, FileUtils.GSON.toJson(defaultValue));
+            getOwnPlugin().getPluginLogger().info("创建 " + file.getName() + " 的模板完成!");
+        }
+        getOwnPlugin().getPluginLogger().info("正在读取配置文件 " + file.getName() + " 的现有存档.");
+        getData().put(file.getName(), FileUtils.GSON.fromJson(readConfigurationFile(file), defaultValue.getClass()));
+        getOwnPlugin().getPluginLogger().info("读取配置文件 " + file.getName() + " 已成功.");
+    }
+
+    public void writeConfigurationFile(File file, String content) {
+        FileUtils.writeFileContent(file, content);
+    }
+
+    public String readConfigurationFile(File file) {
+        return FileUtils.readFileContent(file);
+    }
+
 
     public void reloadFiles() throws ConfigurationException {
         try {

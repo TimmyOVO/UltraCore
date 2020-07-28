@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 public final class ConfigurationFormatConverter {
-    private String content;
+    private final String content;
 
     private ConfigurationFormatConverter(String content) {
         this.content = content;

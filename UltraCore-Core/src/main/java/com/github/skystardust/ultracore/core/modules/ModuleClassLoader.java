@@ -15,7 +15,7 @@ import java.util.jar.Manifest;
 public class ModuleClassLoader extends URLClassLoader {
     private AbstractModule instance;
     private String moduleName;
-    private File file;
+    private final File file;
 
     public ModuleClassLoader(URL[] urls, ClassLoader parent, File file) {
         super(urls, parent);

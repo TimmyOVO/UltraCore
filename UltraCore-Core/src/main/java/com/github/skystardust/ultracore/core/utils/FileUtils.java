@@ -60,7 +60,7 @@ public class FileUtils {
     static void writeFile(File file, String content) {
         BufferedWriter bufferedWriter = null;
         try {
-            bufferedWriter = Files.newWriter(file, Charset.forName("UTF-8"));
+            bufferedWriter = Files.newWriter(file, StandardCharsets.UTF_8);
             bufferedWriter.write(content);
             bufferedWriter.close();
         } catch (IOException var4) {

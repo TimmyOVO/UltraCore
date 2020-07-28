@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class DatabaseRegistry {
     @Getter
-    private static Map<String, DatabaseManager> pluginDatabaseManagerBaseMap = new HashMap<>();
+    private static final Map<String, DatabaseManager> pluginDatabaseManagerBaseMap = new HashMap<>();
 
     public static void registerPluginDatabase(String plugin, DatabaseManager databaseManager) {
         DatabaseRegistry.pluginDatabaseManagerBaseMap.put(plugin, databaseManager);

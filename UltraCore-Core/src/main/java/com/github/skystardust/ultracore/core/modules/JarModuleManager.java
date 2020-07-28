@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.*;
 
 public class JarModuleManager {
-    private static Map<String, AbstractModule> modulesMap = new HashMap<>();
+    private static final Map<String, AbstractModule> modulesMap = new HashMap<>();
 
     public static Map<String, AbstractModule> getModulesMap() {
         return modulesMap;

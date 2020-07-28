@@ -118,7 +118,7 @@ public class DatabaseManagerBase {
         try {
             ebeanServer.find(modelClass.get(0)).setMaxRows(1).findOneOrEmpty();
         } catch (Exception e) {
-            DefaultServer.class.cast(ebeanServer).executePlugins(false);
+            ((DefaultServer) ebeanServer).executePlugins(false);
         }
         getOwnerPlugin().getPluginLogger().info("初始化数据库 " + name + " 已成功!");
         return this;
@@ -132,7 +132,7 @@ public class DatabaseManagerBase {
     public static final class Builder {
         private SQLConfiguration sqlConfiguration;
         private PluginInstance ownerPlugin;
-        private List<Class<?>> modelClass;
+        private final List<Class<?>> modelClass;
         private String name;
 
         private Builder() {

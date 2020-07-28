@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class DatabaseListenerRegistry {
     @Getter
-    private static Map<String, DatabaseListener> pluginDatabaseListenerMap = new HashMap<>();
+    private static final Map<String, DatabaseListener> pluginDatabaseListenerMap = new HashMap<>();
 
     public static void registerDatabase(String databaseName, DatabaseListener databaseManagerBase) {
         DatabaseListenerRegistry.pluginDatabaseListenerMap.put(databaseName, databaseManagerBase);
