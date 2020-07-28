@@ -61,19 +61,19 @@ public class ConfigurationManager {
     }
 
     public void loadConfiguration(String fileName, Object defaultValue) {
-        loadConfiguration(new File(getOwnPlugin().getDataFolder(), fileName + ".yml"), defaultValue);
+        loadConfiguration(new File(getOwnPlugin().getDataFolder(), fileName + ".yml"),fileName, defaultValue);
     }
 
-    public void loadConfiguration(File file, Object defaultValue) {
-        getOwnPlugin().getPluginLogger().info("初始化配置文件 " + file.getName() + " 中,请稍候..!");
+    public void loadConfiguration(File file,String name, Object defaultValue) {
+        getOwnPlugin().getPluginLogger().info("初始化配置文件 " + name + " 中,请稍候..!");
         if (!file.exists()) {
-            getOwnPlugin().getPluginLogger().info("正在创建配置文件 " + file.getName() + " 的模板.");
+            getOwnPlugin().getPluginLogger().info("正在创建配置文件 " + name + " 的模板.");
             writeConfigurationFile(file, FileUtils.GSON.toJson(defaultValue));
-            getOwnPlugin().getPluginLogger().info("创建 " + file.getName() + " 的模板完成!");
+            getOwnPlugin().getPluginLogger().info("创建 " + name + " 的模板完成!");
         }
-        getOwnPlugin().getPluginLogger().info("正在读取配置文件 " + file.getName() + " 的现有存档.");
-        getData().put(file.getName(), FileUtils.GSON.fromJson(readConfigurationFile(file), defaultValue.getClass()));
-        getOwnPlugin().getPluginLogger().info("读取配置文件 " + file.getName() + " 已成功.");
+        getOwnPlugin().getPluginLogger().info("正在读取配置文件 " + name + " 的现有存档.");
+        getData().put(name, FileUtils.GSON.fromJson(readConfigurationFile(file), defaultValue.getClass()));
+        getOwnPlugin().getPluginLogger().info("读取配置文件 " + name + " 已成功.");
     }
 
     public void writeConfigurationFile(File file, String content) {
