@@ -21,11 +21,11 @@ public class YamlConfigurationManager extends ConfigurationManager {
     }
 
     public void writeConfigurationFile(File file, String content) {
-        FileUtils.writeFileContent(file, content);
+        FileUtils.writeYamlFileContent(file, content);
     }
 
     public String readConfigurationFile(File file) {
-        return FileUtils.readFileContent(file);
+        return FileUtils.readYamlFileContent(file);
     }
 
 }
