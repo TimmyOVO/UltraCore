@@ -20,6 +20,11 @@ public class YamlConfigurationManager extends ConfigurationManager {
         }
     }
 
+    @Override
+    public void loadConfiguration(String fileName, Object defaultValue) {
+        loadConfiguration(new File(getOwnPlugin().getDataFolder(), fileName + ".yml"),fileName, defaultValue);
+    }
+
     public void writeConfigurationFile(File file, String content) {
         FileUtils.writeYamlFileContent(file, content);
     }

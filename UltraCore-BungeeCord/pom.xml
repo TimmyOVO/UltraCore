@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>UltraCore-BungeeCord</artifactId>
-    <version>1.9.1-SNAPSHOT</version>
+    <version>1.9.2-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -70,12 +70,12 @@
         <dependency>
             <groupId>com.github.skystardust</groupId>
             <artifactId>UltraCore-Core</artifactId>
-            <version>3.13-SNAPSHOT</version>
+            <version>3.14-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.12</version>
+            <version>1.18.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

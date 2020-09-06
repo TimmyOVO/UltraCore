@@ -61,7 +61,7 @@ public class ConfigurationManager {
     }
 
     public void loadConfiguration(String fileName, Object defaultValue) {
-        loadConfiguration(new File(getOwnPlugin().getDataFolder(), fileName + ".yml"),fileName, defaultValue);
+        loadConfiguration(new File(getOwnPlugin().getDataFolder(), fileName + ".conf"),fileName, defaultValue);
     }
 
     public void loadConfiguration(File file,String name, Object defaultValue) {

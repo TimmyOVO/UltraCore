@@ -6,7 +6,7 @@
 
     <groupId>com.github.skystardust</groupId>
     <artifactId>UltraCore-Sponge</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>UltraCore Sponge</name>
