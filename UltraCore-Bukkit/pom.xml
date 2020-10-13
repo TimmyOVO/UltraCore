@@ -73,7 +73,7 @@
         <dependency>
             <groupId>com.github.skystardust</groupId>
             <artifactId>UltraCore-Core</artifactId>
-            <version>3.14-SNAPSHOT</version>
+            <version>3.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>

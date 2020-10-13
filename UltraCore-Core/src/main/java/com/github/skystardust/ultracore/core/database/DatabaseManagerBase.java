@@ -130,9 +130,9 @@ public class DatabaseManagerBase {
     }
 
     public static final class Builder {
+        private final List<Class<?>> modelClass;
         private SQLConfiguration sqlConfiguration;
         private PluginInstance ownerPlugin;
-        private final List<Class<?>> modelClass;
         private String name;
 
         private Builder() {

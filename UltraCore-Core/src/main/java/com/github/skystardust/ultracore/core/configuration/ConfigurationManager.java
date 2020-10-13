@@ -3,6 +3,7 @@ package com.github.skystardust.ultracore.core.configuration;
 import com.github.skystardust.ultracore.core.PluginInstance;
 import com.github.skystardust.ultracore.core.exceptions.ConfigurationException;
 import com.github.skystardust.ultracore.core.utils.FileUtils;
+import com.google.gson.Gson;
 import lombok.Data;
 
 import javax.annotation.Nullable;
@@ -14,16 +15,22 @@ import java.util.function.Supplier;
 @Data
 public class ConfigurationManager {
     public static final Map<PluginInstance, ConfigurationManager> PLUGIN_INSTANCE_CONFIGURATION_MANAGER_MAP = new HashMap<>();
+    protected Gson jsonSerializer;
     private PluginInstance ownPlugin;
     private Map<String, Object> configurationModels;
     private Map<String, Object> data;
     private Map.Entry<Class<?>, Object> classSetterInfo;
 
     public ConfigurationManager(PluginInstance ownPlugin) {
+        this(ownPlugin, FileUtils.GSON);
+    }
+
+    public ConfigurationManager(PluginInstance ownPlugin, Gson jsonSerializer) {
         this.ownPlugin = ownPlugin;
         this.configurationModels = new HashMap<>();
         this.data = new HashMap<>();
         PLUGIN_INSTANCE_CONFIGURATION_MANAGER_MAP.put(ownPlugin, this);
+        this.jsonSerializer = jsonSerializer;
     }
 
     public ConfigurationManager registerConfiguration(String name, Supplier o) {
@@ -61,18 +68,18 @@ public class ConfigurationManager {
     }
 
     public void loadConfiguration(String fileName, Object defaultValue) {
-        loadConfiguration(new File(getOwnPlugin().getDataFolder(), fileName + ".conf"),fileName, defaultValue);
+        loadConfiguration(new File(getOwnPlugin().getDataFolder(), fileName + ".conf"), fileName, defaultValue);
     }
 
-    public void loadConfiguration(File file,String name, Object defaultValue) {
+    public void loadConfiguration(File file, String name, Object defaultValue) {
         getOwnPlugin().getPluginLogger().info("初始化配置文件 " + name + " 中,请稍候..!");
         if (!file.exists()) {
             getOwnPlugin().getPluginLogger().info("正在创建配置文件 " + name + " 的模板.");
-            writeConfigurationFile(file, FileUtils.GSON.toJson(defaultValue));
+            writeConfigurationFile(file, jsonSerializer.toJson(defaultValue));
             getOwnPlugin().getPluginLogger().info("创建 " + name + " 的模板完成!");
         }
         getOwnPlugin().getPluginLogger().info("正在读取配置文件 " + name + " 的现有存档.");
-        getData().put(name, FileUtils.GSON.fromJson(readConfigurationFile(file), defaultValue.getClass()));
+        getData().put(name, jsonSerializer.fromJson(readConfigurationFile(file), defaultValue.getClass()));
         getOwnPlugin().getPluginLogger().info("读取配置文件 " + name + " 已成功.");
     }
 
@@ -101,7 +108,7 @@ public class ConfigurationManager {
         Object o = configurationModels.get(name);
         if (o != null) {
             File file = new File(ownPlugin.getDataFolder(), name + ".conf");
-            FileUtils.writeFileContent(file, FileUtils.GSON.toJson(data.get(name)));
+            FileUtils.writeFileContent(file, jsonSerializer.toJson(data.get(name)));
         }
     }
 

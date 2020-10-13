@@ -16,13 +16,13 @@ public class YamlConfigurationManager extends ConfigurationManager {
         Object o = getConfigurationModels().get(name);
         if (o != null) {
             File file = new File(getOwnPlugin().getDataFolder(), name + ".yml");
-            writeConfigurationFile(file, FileUtils.GSON.toJson(getData().get(name)));
+            writeConfigurationFile(file, jsonSerializer.toJson(getData().get(name)));
         }
     }
 
     @Override
     public void loadConfiguration(String fileName, Object defaultValue) {
-        loadConfiguration(new File(getOwnPlugin().getDataFolder(), fileName + ".yml"),fileName, defaultValue);
+        loadConfiguration(new File(getOwnPlugin().getDataFolder(), fileName + ".yml"), fileName, defaultValue);
     }
 
     public void writeConfigurationFile(File file, String content) {
