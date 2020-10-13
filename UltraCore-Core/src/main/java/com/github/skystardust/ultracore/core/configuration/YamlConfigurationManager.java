@@ -2,6 +2,7 @@ package com.github.skystardust.ultracore.core.configuration;
 
 import com.github.skystardust.ultracore.core.PluginInstance;
 import com.github.skystardust.ultracore.core.utils.FileUtils;
+import com.google.gson.Gson;
 
 import java.io.File;
 
@@ -10,6 +11,9 @@ public class YamlConfigurationManager extends ConfigurationManager {
         super(ownPlugin);
     }
 
+    public YamlConfigurationManager(PluginInstance ownPlugin, Gson jsonSerializer) {
+        super(ownPlugin, jsonSerializer);
+    }
 
     @Override
     public void saveFile(String name) {
