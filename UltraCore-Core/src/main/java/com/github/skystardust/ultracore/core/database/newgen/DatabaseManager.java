@@ -10,12 +10,11 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.ebean.EbeanServer;
 import io.ebean.EbeanServerFactory;
 import io.ebean.config.ServerConfig;
-import io.ebean.datasource.DataSourceConfig;
 import io.ebean.plugin.SpiServer;
 import io.ebeaninternal.dbmigration.DdlGenerator;
-import io.ebeaninternal.server.core.DefaultServer;
 import lombok.Getter;
 import lombok.Setter;
+import org.avaje.datasource.DataSourceConfig;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -148,9 +147,9 @@ public class DatabaseManager {
                 String invoke = (String) createAllDdl.invoke(ddlGenerator1);
                 pluginLogger.info("Executing init script ");
                 pluginLogger.info(invoke);
-                ddlGenerator1.runScript(((DefaultServer) ebeanServer).getDataSource().getConnection(), false, invoke, "init_script");
+                ddlGenerator1.runScript(false, invoke, "init_script");
                 pluginLogger.info("Done...");
-            } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | SQLException ex) {
+            } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
                 ex.printStackTrace();
             }
         }

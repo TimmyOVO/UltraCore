@@ -10,10 +10,10 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.ebean.EbeanServer;
 import io.ebean.EbeanServerFactory;
 import io.ebean.config.ServerConfig;
-import io.ebean.datasource.DataSourceConfig;
 import io.ebeaninternal.server.core.DefaultServer;
 import lombok.Getter;
 import lombok.Setter;
+import org.avaje.datasource.DataSourceConfig;
 
 import javax.annotation.Nonnull;
 import java.io.File;
