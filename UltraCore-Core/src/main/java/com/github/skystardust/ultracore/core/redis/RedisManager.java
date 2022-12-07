@@ -12,13 +12,18 @@ import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
+import io.lettuce.core.support.BoundedAsyncPool;
+import io.lettuce.core.support.ConnectionPoolSupport;
 import lombok.*;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.time.Duration;
+import java.net.ConnectException;
 import java.util.*;
+import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 @Data
@@ -31,7 +36,7 @@ public class RedisManager {
     private PluginInstance ownerInstance;
     private RedisConfiguration redisConfiguration;
     private RedisClient redisClient;
-    private StatefulRedisConnection<String, String> redisConnection;
+    private GenericObjectPool<StatefulRedisConnection<String, String>> redisPool;
     private StatefulRedisPubSubConnection<String, String> redisMessageQueueCommands;
     private Map<String, RedisPubSubListener<String, String>> channelMessageListeners;
 
@@ -40,7 +45,6 @@ public class RedisManager {
         ownerInstance = builder.ownerInstance;
         setRedisConfiguration(builder.redisConfiguration);
         setRedisClient(builder.redisClient);
-        setRedisConnection(builder.redisConnection);
         setRedisMessageQueueCommands(builder.redisMessageQueueCommands);
         setChannelMessageListeners(builder.channelMessageListeners);
     }
@@ -64,7 +68,6 @@ public class RedisManager {
         builder.ownerInstance = copy.getOwnerInstance();
         builder.redisConfiguration = copy.getRedisConfiguration();
         builder.redisClient = copy.getRedisClient();
-        builder.redisConnection = copy.getRedisConnection();
         builder.redisMessageQueueCommands = copy.getRedisMessageQueueCommands();
         builder.channelMessageListeners = copy.getChannelMessageListeners();
         return builder;
@@ -93,8 +96,8 @@ public class RedisManager {
         ownerInstance.getPluginLogger().info("正在尝试连接到 Redis ....");
         try {
             this.redisClient = RedisClient.create(redisConfiguration.getRedisUrl());
-            this.redisConnection = redisClient.connect();
-            this.redisConnection.setTimeout(Duration.ofSeconds(30));
+            this.redisPool = ConnectionPoolSupport
+                    .createGenericObjectPool(() -> redisClient.connect(), new GenericObjectPoolConfig<>());
             this.redisMessageQueueCommands = redisClient.connectPubSub();
             this.channelMessageListeners.forEach((key, value) -> {
                 redisMessageQueueCommands.addListener(value);
@@ -132,15 +135,27 @@ public class RedisManager {
 
     @Deprecated
     public void publishMessage(String channel, String message) {
-        this.redisConnection.async().publish(channel, message);
+        try (StatefulRedisConnection<String, String> connection = this.redisPool.borrowObject()) {
+            connection.async().publish(channel, message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public RedisFuture<Long> asyncPublishMessage(String channel, String message) {
-        return this.redisConnection.async().publish(channel, message);
+    public RedisFuture<Long> asyncPublishMessage(String channel, String message) throws ConnectException {
+        try (StatefulRedisConnection<String, String> connection = this.redisPool.borrowObject()) {
+            return connection.async().publish(channel, message);
+        } catch (Exception e) {
+            throw new ConnectException(e.getLocalizedMessage());
+        }
     }
 
-    public long syncPublishMessage(String channel, String message) {
-        return this.redisConnection.sync().publish(channel, message);
+    public long syncPublishMessage(String channel, String message) throws ConnectException {
+        try (StatefulRedisConnection<String, String> connection = this.redisPool.borrowObject()) {
+            return connection.sync().publish(channel, message);
+        } catch (Exception e) {
+            throw new ConnectException(e.getLocalizedMessage());
+        }
     }
 
     public void publishMessage(String channel, AbstractRedisModel model) {
@@ -148,8 +163,8 @@ public class RedisManager {
     }
 
     public void closeConnection() {
-        this.redisConnection.close();
         this.redisMessageQueueCommands.close();
+        this.redisClient.close();
     }
 
     public static final class Builder {
@@ -157,12 +172,17 @@ public class RedisManager {
         private PluginInstance ownerInstance;
         private RedisConfiguration redisConfiguration;
         private RedisClient redisClient;
+        private CompletionStage<BoundedAsyncPool<StatefulRedisConnection<String, String>>> redisPool;
         private StatefulRedisConnection<String, String> redisConnection;
         private RedisCommands<String, String> redisCommands;
         private StatefulRedisPubSubConnection<String, String> redisMessageQueueCommands;
         private Map<String, RedisPubSubListener<String, String>> channelMessageListeners;
 
         private Builder() {
+        }
+
+        public static Builder newBuilder() {
+            return new Builder();
         }
 
         @Nonnull
@@ -186,6 +206,11 @@ public class RedisManager {
         @Nonnull
         public Builder withRedisClient(@Nonnull RedisClient val) {
             redisClient = val;
+            return this;
+        }
+
+        public Builder withRedisPool(CompletionStage<BoundedAsyncPool<StatefulRedisConnection<String, String>>> val) {
+            redisPool = val;
             return this;
         }
 
@@ -221,7 +246,7 @@ public class RedisManager {
             return this;
         }
 
-        public Builder addRedisMessageListener(@Nonnull DefaultChannelListener listener) {
+        public Builder addRedisMessageListener(@Nonnull DefaultChannelListener<AbstractRedisModel> listener) {
             if (channelMessageListeners == null) {
                 channelMessageListeners = Maps.newHashMap();
             }
