@@ -7,6 +7,7 @@ import com.github.skystardust.ultracore.core.redis.models.AbstractRedisModel;
 import com.github.skystardust.ultracore.core.utils.FileUtils;
 import com.google.common.collect.Maps;
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.RedisFuture;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import io.lettuce.core.pubsub.RedisPubSubListener;
@@ -31,7 +32,6 @@ public class RedisManager {
     private RedisConfiguration redisConfiguration;
     private RedisClient redisClient;
     private StatefulRedisConnection<String, String> redisConnection;
-    private RedisCommands<String, String> redisCommands;
     private StatefulRedisPubSubConnection<String, String> redisMessageQueueCommands;
     private Map<String, RedisPubSubListener<String, String>> channelMessageListeners;
 
@@ -41,7 +41,6 @@ public class RedisManager {
         setRedisConfiguration(builder.redisConfiguration);
         setRedisClient(builder.redisClient);
         setRedisConnection(builder.redisConnection);
-        setRedisCommands(builder.redisCommands);
         setRedisMessageQueueCommands(builder.redisMessageQueueCommands);
         setChannelMessageListeners(builder.channelMessageListeners);
     }
@@ -66,7 +65,6 @@ public class RedisManager {
         builder.redisConfiguration = copy.getRedisConfiguration();
         builder.redisClient = copy.getRedisClient();
         builder.redisConnection = copy.getRedisConnection();
-        builder.redisCommands = copy.getRedisCommands();
         builder.redisMessageQueueCommands = copy.getRedisMessageQueueCommands();
         builder.channelMessageListeners = copy.getChannelMessageListeners();
         return builder;
@@ -97,7 +95,6 @@ public class RedisManager {
             this.redisClient = RedisClient.create(redisConfiguration.getRedisUrl());
             this.redisConnection = redisClient.connect();
             this.redisConnection.setTimeout(Duration.ofSeconds(30));
-            this.redisCommands = redisConnection.sync();
             this.redisMessageQueueCommands = redisClient.connectPubSub();
             this.channelMessageListeners.forEach((key, value) -> {
                 redisMessageQueueCommands.addListener(value);
@@ -133,12 +130,26 @@ public class RedisManager {
         return Optional.of(this);
     }
 
+    @Deprecated
     public void publishMessage(String channel, String message) {
-        this.redisClient.connect().sync().publish(channel, message);
+        this.redisConnection.async().publish(channel, message);
+    }
+
+    public RedisFuture<Long> asyncPublishMessage(String channel, String message) {
+        return this.redisConnection.async().publish(channel, message);
+    }
+
+    public long syncPublishMessage(String channel, String message) {
+        return this.redisConnection.sync().publish(channel, message);
     }
 
     public void publishMessage(String channel, AbstractRedisModel model) {
         publishMessage(channel, model.asString());
+    }
+
+    public void closeConnection() {
+        this.redisConnection.close();
+        this.redisMessageQueueCommands.close();
     }
 
     public static final class Builder {
