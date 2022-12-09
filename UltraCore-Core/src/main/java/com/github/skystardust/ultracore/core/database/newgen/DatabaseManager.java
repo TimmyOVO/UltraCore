@@ -22,10 +22,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 @Getter
@@ -64,6 +64,10 @@ public class DatabaseManager {
                                 .withUrl("jdbc:mysql://localhost:3306/database").withDriver("com.mysql.jdbc.Driver")
                                 .withUsername("root")
                                 .withPassword("pwd")
+                                .withMaxPoolSize(5)
+                                .withMinIdle(2)
+                                .withMaxLifetime(TimeUnit.MINUTES.toMillis(30))
+                                .withLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(5))
                                 .build()
                 ));
             }
@@ -115,6 +119,7 @@ public class DatabaseManager {
             }
             ServerConfig serverConfig = new ServerConfig();
             HikariConfig hikariConfig = new HikariConfig();
+            parseSQLPoolConfiguration(hikariConfig);
             hikariConfig.setUsername(sqlConfiguration.getUsername());
             hikariConfig.setPassword(sqlConfiguration.getPassword());
             hikariConfig.setJdbcUrl(sqlConfiguration.getUrl());
@@ -149,12 +154,34 @@ public class DatabaseManager {
                 pluginLogger.info(invoke);
                 ddlGenerator1.runScript(false, invoke, "init_script");
                 pluginLogger.info("Done...");
-            } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
+            } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException |
+                     InvocationTargetException ex) {
                 ex.printStackTrace();
             }
         }
         pluginLogger.info("初始化 " + name + " 的数据库成功!");
         return this;
+    }
+
+    private void parseSQLPoolConfiguration(HikariConfig hikariConfig) {
+        if (sqlConfiguration.getMinIdle() > 0) {
+            hikariConfig.setMinimumIdle(sqlConfiguration.getMinIdle());
+        } else {
+            hikariConfig.setMinimumIdle(2);
+        }
+        if (sqlConfiguration.getMaxPoolSize() > 0) {
+            hikariConfig.setMaximumPoolSize(sqlConfiguration.getMaxPoolSize());
+        } else {
+            hikariConfig.setMaximumPoolSize(5);
+        }
+        if (sqlConfiguration.getMaxLifetime() > 0) {
+            hikariConfig.setMaxLifetime(sqlConfiguration.getMaxLifetime());
+        }
+        if (sqlConfiguration.getLeakDetectionThreshold() > 0) {
+            hikariConfig.setLeakDetectionThreshold(hikariConfig.getLeakDetectionThreshold());
+        } else {
+            hikariConfig.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(5));
+        }
     }
 
     public DatabaseManager reloadDatabase() throws ConfigurationException, DatabaseInitException {

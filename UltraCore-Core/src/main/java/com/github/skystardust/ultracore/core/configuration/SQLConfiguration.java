@@ -18,12 +18,22 @@ public class SQLConfiguration {
     private String password;
     private Boolean autoCommit;
 
+    private int minIdle;
+    private int maxPoolSize;
+
+    private long maxLifetime;
+    private long leakDetectionThreshold;
+
     private SQLConfiguration(Builder builder) {
         setUrl(builder.url);
         setDriver(builder.driver);
         setUsername(builder.username);
         setPassword(builder.password);
         setAutoCommit(builder.autoCommit);
+        setMinIdle(builder.minIdle);
+        setMaxPoolSize(builder.maxPoolSize);
+        setMaxLifetime(builder.maxLifetime);
+        setLeakDetectionThreshold(builder.leakDetectionThreshold);
     }
 
     public static Builder newBuilder() {
@@ -37,8 +47,16 @@ public class SQLConfiguration {
         private String username;
         private String password;
         private Boolean autoCommit;
+        private int minIdle;
+        private int maxPoolSize;
+        private long maxLifetime;
+        private long leakDetectionThreshold;
 
         private Builder() {
+        }
+
+        public static Builder newBuilder() {
+            return new Builder();
         }
 
         @Nonnull
@@ -68,6 +86,26 @@ public class SQLConfiguration {
         @Nonnull
         public Builder withAutoCommit(@Nonnull Boolean val) {
             autoCommit = val;
+            return this;
+        }
+
+        public Builder withMinIdle(int val) {
+            minIdle = val;
+            return this;
+        }
+
+        public Builder withMaxPoolSize(int val) {
+            maxPoolSize = val;
+            return this;
+        }
+
+        public Builder withMaxLifetime(long val) {
+            maxLifetime = val;
+            return this;
+        }
+
+        public Builder withLeakDetectionThreshold(long val) {
+            leakDetectionThreshold = val;
             return this;
         }
 
