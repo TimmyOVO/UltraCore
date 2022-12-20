@@ -246,7 +246,7 @@ public class RedisManager {
             return this;
         }
 
-        public Builder addRedisMessageListener(@Nonnull DefaultChannelListener<AbstractRedisModel> listener) {
+        public Builder addRedisMessageListener(@Nonnull DefaultChannelListener listener) {
             if (channelMessageListeners == null) {
                 channelMessageListeners = Maps.newHashMap();
             }
